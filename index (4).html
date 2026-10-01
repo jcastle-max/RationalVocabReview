@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rational Numbers Vocab Practice</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Nunito+Sans:wght@400;600;800&display=swap">
+<style>
+/* Layout: one centered study column. A "what am I studying" picker on top, then activity tabs, then one activity panel. */
+:root {
+  --bg: #F2F8FA; --surface: #FFFFFF; --ink: #14264A; --soft: #475873;
+  --line: #D3E4EC; --cyan: #12A5CC; --cyan-ink: #0B6B87; --cyan-soft: #DDF3F9;
+  --red: #C21F34; --red-soft: #FBE5E8; --good: #1C7C4A; --good-soft: #DFF3E7; --on-cyan: #0E1F3A;
+  --display: 'Fredoka', 'Trebuchet MS', Arial, sans-serif;
+  --body: 'Nunito Sans', Arial, sans-serif;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0F1B30; --surface: #18294A; --ink: #EAF3F7; --soft: #B4C6D8;
+  --line: #2A3F63; --cyan: #3CC3E6; --cyan-ink: #7FD8EF; --cyan-soft: #16384A;
+  --red: #FF7A8A; --red-soft: #3D1F2A; --good: #6FD69C; --good-soft: #173B2B; --on-cyan: #0E1F3A; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #0F1B30; --surface: #18294A; --ink: #EAF3F7; --soft: #B4C6D8;
+  --line: #2A3F63; --cyan: #3CC3E6; --cyan-ink: #7FD8EF; --cyan-soft: #16384A;
+  --red: #FF7A8A; --red-soft: #3D1F2A; --good: #6FD69C; --good-soft: #173B2B; --on-cyan: #0E1F3A; color-scheme: dark }
+
+* { box-sizing: border-box }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 17px; line-height: 1.5; padding: 0 16px; }
+.wrap { max-width: 760px; margin: 0 auto; padding-block: 28px 48px; display: flex; flex-direction: column; gap: 20px; }
+header { display: flex; flex-direction: column; gap: 4px; }
+.eyebrow { font-size: 13px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: var(--red); margin: 0 }
+h1 { font-family: var(--display); font-weight: 600; font-size: clamp(30px, 6vw, 44px); line-height: 1.1; margin: 0; text-wrap: balance }
+.sub { color: var(--soft); margin: 0 }
+h2 { font-family: var(--display); font-weight: 600; font-size: 26px; margin: 0 }
+button { font-family: inherit }
+button:focus-visible { outline: 3px solid var(--red); outline-offset: 2px }
+
+/* Picker */
+.picker { background: var(--surface); border: 2px solid var(--line); border-radius: 20px; padding: clamp(16px, 3.5vw, 24px); display: flex; flex-direction: column; gap: 14px }
+.pick-group { display: flex; flex-direction: column; gap: 8px }
+.pick-label { font-size: 13px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--soft); margin: 0 }
+.chips { display: flex; flex-wrap: wrap; gap: 8px }
+.chip { font-weight: 800; font-size: 15px; padding: 8px 15px; border-radius: 999px; border: 2px solid var(--line); background: var(--bg); color: var(--ink); cursor: pointer }
+.chip.test { border-color: var(--red); color: var(--red); background: transparent }
+.chip[aria-pressed="true"] { background: var(--red); border-color: var(--red); color: #fff }
+.now { margin: 0; font-weight: 700; color: var(--soft); font-size: 15px; border-top: 2px dashed var(--line); padding-top: 12px }
+.now b { color: var(--ink) }
+
+/* Tabs */
+.tabs { display: flex; flex-wrap: wrap; gap: 8px }
+.tab { font-weight: 800; font-size: 15px; padding: 10px 16px; border-radius: 999px; border: 2px solid var(--line); background: var(--surface); color: var(--ink); cursor: pointer }
+.tab[aria-selected="true"] { background: var(--cyan); border-color: var(--cyan); color: var(--on-cyan) }
+
+/* Panels + shared controls */
+.panel { background: var(--surface); border: 2px solid var(--line); border-radius: 20px; padding: clamp(18px, 4vw, 32px); display: flex; flex-direction: column; gap: 18px }
+.hint { color: var(--soft); margin: 0; font-size: 15px }
+.btn { font-weight: 800; font-size: 16px; padding: 12px 20px; border-radius: 12px; border: 2px solid var(--ink); background: var(--ink); color: var(--bg); cursor: pointer }
+.btn.ghost { background: transparent; color: var(--ink) }
+.row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center }
+.row.split { justify-content: space-between }
+.count { font-variant-numeric: tabular-nums; color: var(--soft); font-weight: 800 }
+.feedback { margin: 0; font-weight: 600; min-height: 1.5em }
+.feedback .ok { color: var(--good); font-weight: 800 }
+.feedback .no { color: var(--red); font-weight: 800 }
+
+/* Flashcards */
+.card { min-height: 290px; width: 100%; border-radius: 18px; border: 3px solid var(--cyan); background: var(--cyan-soft); color: var(--ink); display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 10px; padding: 24px; cursor: pointer; font: inherit }
+.card .tag { font-size: 14px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--cyan-ink) }
+.card .term { font-family: var(--display); font-size: clamp(30px, 7.5vw, 50px); font-weight: 600; line-height: 1.1; text-wrap: balance }
+.card .def { font-size: 20px; font-weight: 600; max-width: 34ch }
+.card .ex { font-size: 16px; color: var(--soft); max-width: 40ch }
+.card .trap { font-size: 15px; color: var(--red); font-weight: 700; max-width: 40ch }
+.card.back { border-color: var(--red); background: var(--red-soft) }
+.card.back .tag { color: var(--red) }
+
+/* Match */
+.match { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); gap: 12px }
+.col { display: flex; flex-direction: column; gap: 10px; min-width: 0 }
+.tile { text-align: left; font-weight: 600; font-size: 15px; color: var(--ink); background: var(--bg); border: 2px solid var(--line); border-radius: 12px; padding: 12px 14px; cursor: pointer; min-height: 56px }
+.tile.term-t { font-family: var(--display); font-size: 18px }
+.tile.sel { border-color: var(--cyan); background: var(--cyan-soft) }
+.tile.done { border-color: var(--good); background: var(--good-soft); cursor: default; opacity: .75 }
+.tile.miss { border-color: var(--red); background: var(--red-soft) }
+@media (max-width: 520px) { .match { grid-template-columns: 1fr } }
+
+/* Quiz */
+.q { font-size: 21px; font-weight: 800; margin: 0; text-wrap: balance }
+.opts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px }
+@media (max-width: 520px) { .opts { grid-template-columns: 1fr } }
+.opt { text-align: left; font-weight: 600; font-size: 17px; color: var(--ink); background: var(--bg); border: 2px solid var(--line); border-radius: 12px; padding: 14px; cursor: pointer }
+.opt.right { border-color: var(--good); background: var(--good-soft) }
+.opt.wrong { border-color: var(--red); background: var(--red-soft) }
+.bar { height: 8px; background: var(--line); border-radius: 99px; overflow: hidden }
+.bar > i { display: block; height: 100%; background: var(--cyan); width: 0; transition: width .3s }
+
+/* Compare sprint */
+.problem { display: flex; justify-content: center; align-items: center; gap: clamp(12px, 4vw, 28px); font-family: var(--display); font-size: clamp(38px, 10vw, 66px); font-weight: 600; margin: 4px 0; font-variant-numeric: tabular-nums }
+.problem .blank { min-width: 1.4em; text-align: center; border-bottom: 4px solid var(--line); color: var(--soft) }
+.signs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px }
+.sign { font-family: var(--display); font-weight: 600; font-size: 34px; padding: 12px; border-radius: 14px; cursor: pointer; border: 3px solid var(--cyan); background: var(--cyan-soft); color: var(--ink) }
+.rule { background: var(--bg); border-radius: 12px; padding: 12px 16px; margin: 0; font-weight: 600 }
+@media (prefers-reduced-motion: reduce) { .bar > i { transition: none } }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <p class="eyebrow">7th Grade Math · Mrs. Castle</p>
+    <h1>Rational Numbers Vocab Practice</h1>
+    <p class="sub">Pick your test or one word group, then choose an activity.</p>
+  </header>
+
+  <section class="picker" aria-label="What are you studying?">
+    <div class="pick-group">
+      <p class="pick-label">Studying for a test</p>
+      <div class="chips" id="testChips"></div>
+    </div>
+    <div class="pick-group">
+      <p class="pick-label">Or study one group</p>
+      <div class="chips" id="groupChips"></div>
+    </div>
+    <p class="now" id="nowStudying" aria-live="polite"></p>
+  </section>
+
+  <div class="tabs" role="tablist">
+    <button class="tab" role="tab" aria-selected="true" data-p="cards">Flashcards</button>
+    <button class="tab" role="tab" aria-selected="false" data-p="match">Match It</button>
+    <button class="tab" role="tab" aria-selected="false" data-p="quiz">Practice Quiz</button>
+    <button class="tab" role="tab" aria-selected="false" data-p="sprint">Compare Sprint</button>
+  </div>
+
+  <section class="panel" id="p-cards">
+    <div class="row split"><h2>Flashcards</h2><span class="count" id="cardCount"></span></div>
+    <p class="hint">Say the definition out loud, then tap the card to check.</p>
+    <button class="card" id="card"></button>
+    <div class="row">
+      <button class="btn ghost" id="prevCard">Back</button>
+      <button class="btn" id="nextCard">Next card</button>
+      <button class="btn ghost" id="shuffleCards">Shuffle</button>
+    </div>
+  </section>
+
+  <section class="panel" id="p-match" hidden>
+    <div class="row split"><h2>Match It</h2><span class="count" id="matchCount"></span></div>
+    <p class="hint">Tap a word, then tap its meaning. Each round uses up to 5 words.</p>
+    <div class="match"><div class="col" id="mTerms"></div><div class="col" id="mDefs"></div></div>
+    <p class="feedback" id="matchMsg" aria-live="polite"></p>
+    <div class="row"><button class="btn" id="matchReset">New round</button></div>
+  </section>
+
+  <section class="panel" id="p-quiz" hidden>
+    <div class="row split"><h2>Practice Quiz</h2><span class="count" id="quizCount"></span></div>
+    <div class="bar"><i id="quizBar"></i></div>
+    <div id="quizBody" style="display:flex;flex-direction:column;gap:16px"></div>
+  </section>
+
+  <section class="panel" id="p-sprint" hidden>
+    <div class="row split"><h2>Compare Sprint</h2><span class="count" id="sprintCount"></span></div>
+    <p class="hint">Pick the symbol that makes it true. Change to the same form if you need to.</p>
+    <div class="problem" aria-live="polite"><span id="spA"></span><span class="blank">?</span><span id="spB"></span></div>
+    <div class="signs">
+      <button class="sign" data-s="<" aria-label="less than">&lt;</button>
+      <button class="sign" data-s="=" aria-label="equal to">=</button>
+      <button class="sign" data-s=">" aria-label="greater than">&gt;</button>
+    </div>
+    <p class="feedback" id="sprintMsg" aria-live="polite"></p>
+    <p class="rule">Farther right on the number line = greater. The open side of &lt; or &gt; faces the greater number.</p>
+  </section>
+</div>
+
+<script>
+/* ============================================================
+   EDIT HERE: word groups, tests, vocabulary, quiz questions
+   ============================================================ */
+const M = '−'; // real minus sign
+
+// Word groups (one chip each under "Or study one group")
+const GROUPS = {
+  w1:   'Week 1 words',
+  w2:   'Week 2 words',
+  w3:   'Week 3 words',
+  int:  'Integers',
+  ops:  'Order of Ops & Properties',
+  core: 'Core words'
+};
+
+// Tests (chips under "Studying for a test"). Each test = the groups on it.
+const TESTS = {
+  test1: { label: 'Week 1 test', groups: ['w1', 'int', 'ops', 'core'] },
+  test2: { label: 'Week 2 test', groups: ['w2', 'w1', 'core'] },
+  test3: { label: 'Week 3 test', groups: ['w3', 'w2', 'w1'] }
+};
+
+const VOCAB = [
+  // Core words
+  { g: 'core', term: 'Rational number', def: 'Any number that can be written as a fraction a/b, where a and b are integers and b ≠ 0.', ex: '3/4,  ' + M + '2,  0.5,  and 0.333… are all rational.', trap: 'Trap: thinking only fractions count. Integers and decimals are rational too.' },
+  { g: 'core', term: 'Integer', def: 'A whole number or its opposite, with no fraction or decimal part.', ex: '…' + M + '2, ' + M + '1, 0, 1, 2…', trap: 'Trap: 2.5 and 1/2 are NOT integers.' },
+  { g: 'core', term: 'Positive / negative number', def: 'A number greater than zero (positive) or less than zero (negative).', ex: '7 is positive.  ' + M + '7 is negative.', trap: 'Trap: 0 is neither positive nor negative.' },
+  { g: 'core', term: 'Opposite', def: 'A number the same distance from 0 on the other side.', ex: '3 and ' + M + '3 are opposites.', trap: 'Trap: the opposite of 5 is ' + M + '5, not 1/5.' },
+  { g: 'core', term: 'Absolute value', def: 'A number\'s distance from 0. It is never negative. Written |x|.', ex: '|' + M + '5| = 5', trap: 'Trap: |' + M + '5| is not ' + M + '5. Distance can\'t be negative.' },
+  { g: 'core', term: 'Number line', def: 'A line that shows numbers in order. Numbers get greater as you move right.', ex: M + '3 is left of 1, so ' + M + '3 < 1.', trap: 'Trap: thinking a negative with big digits is greater. Farther left is always less.' },
+
+  // Week 1
+  { g: 'w1', term: 'Compare', def: 'Decide if one number is greater than, less than, or equal to another.', ex: M + '2 < 1      3/4 > 0.5', trap: 'Trap: 3/8 > 1/2 because 3 > 1. Use a common denominator: 3/8 < 4/8.' },
+  { g: 'w1', term: 'Order', def: 'Put numbers in a row. Ascending = least to greatest. Descending = greatest to least.', ex: 'Least to greatest: ' + M + '3, ' + M + '1, 1/2, 2', trap: 'Trap: putting ' + M + '1 before ' + M + '3. ' + M + '3 is farther left, so it comes first.' },
+  { g: 'w1', term: 'Inequality symbols', def: 'Symbols that compare values: < less than, > greater than, ≤ less than or equal to, ≥ greater than or equal to.', ex: M + '4 < 3      0.5 > ' + M + '1', trap: 'Trap: the point faces the smaller number. The open side faces the greater one.' },
+  { g: 'w1', term: 'Greater than / less than', def: 'Greater than = farther right on the number line. Less than = farther left.', ex: M + '1 > ' + M + '6', trap: 'Trap: ' + M + '6 > ' + M + '1 because 6 > 1. For negatives, closer to 0 is greater.' },
+
+  // Week 2
+  { g: 'w2', term: 'Fraction, decimal, percent', def: 'Three ways to write the same part of a whole.', ex: '1/2 = 0.5 = 50%', trap: 'Trap: 0.5 = 5%. Percent means out of 100, so 0.5 = 50%.' },
+  { g: 'w2', term: 'Terminating decimal', def: 'A decimal that ends.', ex: '3/4 = 0.75      1/8 = 0.125', trap: 'Trap: a long decimal can still terminate. 0.0625 ends.' },
+  { g: 'w2', term: 'Repeating decimal', def: 'A decimal where a digit or group of digits repeats forever. A bar goes over the part that repeats.', ex: '1/3 = 0.333…      2/11 = 0.1818…', trap: 'Trap: in 0.1212…, the bar goes over BOTH the 1 and the 2.' },
+  { g: 'w2', term: 'Equivalent', def: 'Different forms that have the same value.', ex: '3/4 = 0.75 = 75% = 6/8', trap: 'Trap: 0.3 and 1/3 are NOT equivalent. 1/3 = 0.333…' },
+
+  // Week 3
+  { g: 'w3', term: 'Mixed number / improper fraction', def: 'Mixed number: a whole number and a fraction (1 3/4). Improper fraction: the top is greater than or equal to the bottom (7/4).', ex: '1 3/4 = 7/4      2 1/2 = 5/2', trap: 'Trap: thinking an improper fraction is wrong. 7/4 is correct and often easier to compare.' },
+  { g: 'w3', term: 'Common denominator', def: 'The same bottom number for two or more fractions.', ex: '2/3 = 8/12 and 3/4 = 9/12, so 2/3 < 3/4', trap: 'Trap: 2/3 = 2/12. Multiply the top AND bottom by the same number.' },
+  { g: 'w3', term: 'Benchmark', def: 'An easy number (like 0, 1/2, or 1) used to estimate and compare.', ex: '3/7 < 1/2 and 5/9 > 1/2, so 3/7 < 5/9', trap: 'Trap: benchmarks only estimate. If both numbers are close to the same one, use another strategy.' },
+  { g: 'w3', term: 'Convert', def: 'Change a number to a different form without changing its value.', ex: '2/5 = 0.4 = 40%', trap: 'Trap: 2/5 = 2.5. Divide top ÷ bottom: 2 ÷ 5 = 0.4.' },
+
+  // Integers unit
+  { g: 'int', term: 'Illustrate', def: 'To show or explain an idea using a picture, diagram, number line, or example.', ex: 'Illustrate 3 × (' + M + '2): 3 jumps of ' + M + '2 from 0 land on ' + M + '6.', trap: 'Trap: writing only the answer. Illustrate means you draw something.' },
+  { g: 'int', term: 'Model', def: 'A drawing, counters, number line, table, or equation that shows how a math situation works. To model is to show it.', ex: '3 groups of 2 negative counters model 3 × (' + M + '2) = ' + M + '6.', trap: 'Trap: thinking a model is only a drawing. A number line or equation can be a model too.' },
+  { g: 'int', term: 'Multiplying integers', def: 'Same signs → positive. Different signs → negative.', ex: '(' + M + '6)(' + M + '4) = 24      6 × (' + M + '4) = ' + M + '24', trap: 'Trap: two negatives make a negative. (' + M + ') × (' + M + ') is positive.' },
+  { g: 'int', term: 'Dividing integers', def: 'Same signs → positive. Different signs → negative. Same rule as multiplying.', ex: '(' + M + '24) ÷ (' + M + '6) = 4      24 ÷ (' + M + '6) = ' + M + '4', trap: 'Trap: using a different rule for division. It is the same rule.' },
+
+  // Order of operations & properties
+  { g: 'ops', term: 'Order of operations', def: 'The agreed order for evaluating an expression: Parentheses, Exponents, Multiply/Divide (left to right), Add/Subtract (left to right).', ex: '6 + 2 × 5 = 6 + 10 = 16', trap: 'Trap: going left to right: 6 + 2 × 5 → 8 × 5 = 40.' },
+  { g: 'ops', term: 'Simplify / Evaluate', def: 'Simplify: rewrite an expression in its simplest form. Evaluate: find its value by plugging in the given number for each variable.', ex: 'Evaluate 2x + 7 when x = 5:  2(5) + 7 = 17', trap: 'Trap: stopping halfway, like writing 3 + 5 × 2 as 8 × 2.' },
+  { g: 'ops', term: 'Expression', def: 'A math phrase made of numbers, variables, and operations, with no equal sign.', ex: '8 + 3 × 2      5x ' + M + ' 7', trap: 'Trap: 5x ' + M + ' 7 = 13 is NOT an expression. The equal sign makes it an equation.' },
+  { g: 'ops', term: 'Exponent / Base', def: 'In a power like 4³, the base is the number being multiplied, and the exponent tells how many times it is used as a factor.', ex: '2⁴ = 2 × 2 × 2 × 2 = 16', trap: 'Trap: 2⁴ = 2 × 4 = 8. The exponent repeats the base.' },
+  { g: 'ops', term: 'Grouping symbols', def: 'Parentheses ( ), brackets [ ], and braces { } that show which operations to do first.', ex: '3 × (4 + 2) = 3 × 6 = 18', trap: 'Trap: ignoring them: (3 × 4) + 2 = 14.' },
+  { g: 'ops', term: 'Commutative property', def: 'Changing the ORDER of numbers you add or multiply does not change the answer.', ex: '5 + 7 = 7 + 5      a × b = b × a', trap: 'Trap: subtraction is not commutative. 5 ' + M + ' 7 ≠ 7 ' + M + ' 5.' },
+  { g: 'ops', term: 'Associative property', def: 'Changing the GROUPING of numbers you add or multiply does not change the answer.', ex: '(2 + 3) + 4 = 2 + (3 + 4)', trap: 'Trap: subtraction is not associative. (8 ' + M + ' 4) ' + M + ' 2 ≠ 8 ' + M + ' (4 ' + M + ' 2).' },
+  { g: 'ops', term: 'Identity property', def: 'Adding 0 or multiplying by 1 keeps the number the same.', ex: '9 + 0 = 9      9 × 1 = 9', trap: 'Trap: 9 × 0 = 9 is false. That is the property of zero.' },
+  { g: 'ops', term: 'Multiplicative property of zero', def: 'Any number times 0 equals 0.', ex: '15 × 0 = 0      x × 0 = 0', trap: 'Trap: mixing it up with 15 + 0 = 15. That is the identity property.' },
+  { g: 'ops', term: 'Distributive property', def: 'Multiply the outside number by EACH term inside the parentheses: a(b + c) = ab + ac.', ex: '2(x + 7) = 2x + 14', trap: 'Trap: 2(x + 7) = 2x + 7. You have to multiply the 7 too.' },
+  { g: 'ops', term: 'Additive inverse', def: 'The opposite of a number. A number plus its additive inverse equals 0.', ex: '6 + (' + M + '6) = 0', trap: 'Trap: 6 + 6 = 12, not 0. The inverse of 6 is ' + M + '6.' }
+];
+
+// Practice quiz questions. a = correct answer, o = wrong answers, why = shown after answering.
+const QUIZ = [
+  // Core
+  { g: 'core', q: 'Which number is NOT an integer?', a: '4.5', o: [M + '9', '0', '15'], why: 'Integers are whole numbers and their opposites. 4.5 has a decimal part.' },
+  { g: 'core', q: 'Which word describes ALL of these: 0.6, ' + M + '4, 5/8?', a: 'Rational numbers', o: ['Integers', 'Opposites', 'Repeating decimals'], why: 'Each one can be written as a fraction of two integers.' },
+  { g: 'core', q: 'What is the opposite of ' + M + '12?', a: '12', o: [M + '12', '1/12', '0'], why: 'Opposites are the same distance from 0 on different sides.' },
+  { g: 'core', q: '|' + M + '9| = ?', a: '9', o: [M + '9', '0', '18'], why: 'Absolute value is distance from 0, and distance is never negative.' },
+  { g: 'core', q: 'Which number has the greatest absolute value?', a: M + '11', o: ['8', M + '2', '10'], why: M + '11 is 11 units from 0. That is the farthest.' },
+  { g: 'core', q: 'On a number line, numbers get greater as you move…', a: 'to the right', o: ['to the left', 'toward 0', 'away from 0'], why: 'Right means greater, every time.' },
+  { g: 'core', q: 'A number less than 0 is…', a: 'negative', o: ['positive', 'an opposite', 'an absolute value'], why: 'Numbers less than 0 are negative.' },
+  // Week 1
+  { g: 'w1', q: 'Which symbol makes this true?   ' + M + '5 ___ ' + M + '2', a: '<', o: ['>', '=', '≥'], why: M + '5 is farther left than ' + M + '2, so ' + M + '5 < ' + M + '2.' },
+  { g: 'w1', q: 'Which list is in ascending order?', a: M + '4, ' + M + '1, 0, 2', o: ['2, 0, ' + M + '1, ' + M + '4', M + '1, ' + M + '4, 0, 2', '0, ' + M + '1, ' + M + '4, 2'], why: 'Ascending means least to greatest. ' + M + '4 is the least.' },
+  { g: 'w1', q: 'Descending order means…', a: 'greatest to least', o: ['least to greatest', 'closest to 0 first', 'negatives first'], why: 'Descending goes down, from greatest to least.' },
+  { g: 'w1', q: 'Which number is greater: ' + M + '8 or ' + M + '3?', a: M + '3', o: [M + '8', 'They are equal', 'You can\'t tell'], why: M + '3 is closer to 0, so it is farther right and greater.' },
+  { g: 'w1', q: 'The symbol ≤ means…', a: 'less than or equal to', o: ['greater than or equal to', 'less than', 'not equal to'], why: 'The line under < adds "or equal to."' },
+  { g: 'w1', q: 'When you COMPARE two numbers, you…', a: 'decide if one is greater than, less than, or equal to the other', o: ['add them together', 'find their distance from 0', 'write them as percents'], why: 'Comparing uses <, >, or =.' },
+  // Week 2
+  { g: 'w2', q: 'Which shows 2/5 as a decimal and a percent?', a: '0.4 and 40%', o: ['2.5 and 25%', '0.25 and 25%', '0.4 and 4%'], why: '2 ÷ 5 = 0.4, and 0.4 = 40/100 = 40%.' },
+  { g: 'w2', q: 'Which is a terminating decimal?', a: '0.375', o: ['0.444…', '0.1818…', '0.999…'], why: '0.375 ends. The others repeat forever.' },
+  { g: 'w2', q: '5/9 = 0.555…  What kind of decimal is this?', a: 'repeating', o: ['terminating', 'an integer', 'a percent'], why: 'The 5 repeats forever.' },
+  { g: 'w2', q: 'Which is equivalent to 0.75?', a: '3/4', o: ['7/5', '7.5%', '1/75'], why: '3 ÷ 4 = 0.75, so they have the same value.' },
+  { g: 'w2', q: 'Which pair is NOT equivalent?', a: '0.3 and 1/3', o: ['0.5 and 1/2', '0.25 and 25%', '0.2 and 1/5'], why: '1/3 = 0.333…, a little more than 0.3.' },
+  { g: 'w2', q: 'Fractions, decimals, and percents are…', a: 'three ways to write the same part of a whole', o: ['only for positive numbers', 'always different values', 'only for whole numbers'], why: 'Example: 1/2 = 0.5 = 50%.' },
+  // Week 3
+  { g: 'w3', q: 'Write 2 1/3 as an improper fraction.', a: '7/3', o: ['5/3', '6/3', '2/3'], why: '2 × 3 + 1 = 7, so 2 1/3 = 7/3.' },
+  { g: 'w3', q: 'Which is a mixed number?', a: '3 1/2', o: ['7/2', '0.5', '35%'], why: 'A mixed number has a whole number and a fraction.' },
+  { g: 'w3', q: 'What common denominator could you use to compare 3/5 and 2/3?', a: '15', o: ['8', '5', '3'], why: '5 × 3 = 15. Then 3/5 = 9/15 and 2/3 = 10/15.' },
+  { g: 'w3', q: 'Which benchmark is 4/9 closest to?', a: '1/2', o: ['0', '1', '2'], why: 'Half of 9 is 4.5, so 4/9 is just under 1/2.' },
+  { g: 'w3', q: 'Convert 3/5 to a percent.', a: '60%', o: ['35%', '3.5%', '0.6%'], why: '3 ÷ 5 = 0.6, and 0.6 = 60%.' },
+  { g: 'w3', q: 'Convert 0.8 to a fraction.', a: '4/5', o: ['8/100', '1/8', '8/1'], why: '0.8 = 8/10 = 4/5.' },
+  // Integers
+  { g: 'int', q: 'A problem says "Illustrate 4 × (' + M + '2)." What should you do?', a: 'Draw it on a number line or with a picture', o: ['Only write the answer', 'Explain it in words only', 'Skip it'], why: 'Illustrate means show it with a picture, diagram, or number line.' },
+  { g: 'int', q: 'Three groups of 2 negative counters are a ___ of 3 × (' + M + '2).', a: 'model', o: ['exponent', 'base', 'property'], why: 'A model shows how the math works.' },
+  { g: 'int', q: '(' + M + '7)(' + M + '3) = ?', a: '21', o: [M + '21', M + '10', '10'], why: 'Same signs → positive. 7 × 3 = 21.' },
+  { g: 'int', q: '(' + M + '48) ÷ 6 = ?', a: M + '8', o: ['8', M + '42', '42'], why: 'Different signs → negative. 48 ÷ 6 = 8.' },
+  { g: 'int', q: 'When you multiply or divide two numbers with different signs, the answer is…', a: 'negative', o: ['positive', 'zero', 'it depends on which is bigger'], why: 'Different signs → negative, every time.' },
+  // Order of operations & properties
+  { g: 'ops', q: 'Using the order of operations, 10 ' + M + ' 2 × 3 = ?', a: '4', o: ['24', '6', '16'], why: 'Multiply first: 2 × 3 = 6. Then 10 ' + M + ' 6 = 4.' },
+  { g: 'ops', q: 'Evaluate 3x + 2 when x = 4.', a: '14', o: ['9', '36', '20'], why: '3(4) + 2 = 12 + 2 = 14.' },
+  { g: 'ops', q: 'Which is an expression?', a: '4x + 9', o: ['4x + 9 = 21', 'x = 3', '2 + 2 = 4'], why: 'An expression has no equal sign.' },
+  { g: 'ops', q: 'In 5³, which number is the base?', a: '5', o: ['3', '15', '125'], why: 'The base is the number being multiplied: 5 × 5 × 5.' },
+  { g: 'ops', q: '3² = ?', a: '9', o: ['6', '5', '32'], why: '3² means 3 × 3 = 9, not 3 × 2.' },
+  { g: 'ops', q: 'What is 2 × (5 + 1)?', a: '12', o: ['11', '8', '16'], why: 'Grouping symbols first: 5 + 1 = 6. Then 2 × 6 = 12.' },
+  { g: 'ops', q: '4 × 7 = 7 × 4 shows which property?', a: 'Commutative', o: ['Associative', 'Identity', 'Distributive'], why: 'The order changed. That is commutative.' },
+  { g: 'ops', q: '(1 + 6) + 3 = 1 + (6 + 3) shows which property?', a: 'Associative', o: ['Commutative', 'Identity', 'Distributive'], why: 'The grouping changed. That is associative.' },
+  { g: 'ops', q: '12 × 1 = 12 shows which property?', a: 'Identity', o: ['Multiplicative property of zero', 'Commutative', 'Distributive'], why: 'Multiplying by 1 keeps the number the same.' },
+  { g: 'ops', q: '8 × 0 = ?', a: '0', o: ['8', '1', '80'], why: 'Any number times 0 is 0.' },
+  { g: 'ops', q: 'Use the distributive property: 3(x + 4) = ?', a: '3x + 12', o: ['3x + 4', 'x + 12', '7x'], why: 'Multiply 3 by both terms: 3 · x and 3 · 4.' },
+  { g: 'ops', q: 'What is the additive inverse of ' + M + '9?', a: '9', o: [M + '9', '1/9', '0'], why: M + '9 + 9 = 0.' }
+];
+
+// Compare Sprint numbers: [what students see, its value]
+const SPRINT = [
+  [M + '6', -6], [M + '3', -3], [M + '1', -1], ['0', 0], ['2', 2], ['5', 5],
+  ['1/2', .5], ['0.5', .5], ['50%', .5], ['1/4', .25], ['0.25', .25], ['25%', .25],
+  ['3/4', .75], ['0.75', .75], ['2/5', .4], ['0.4', .4], ['0.45', .45], ['0.6', .6],
+  ['1/3', 1 / 3], ['0.3', .3], [M + '1/2', -.5], [M + '0.5', -.5], [M + '0.8', -.8], [M + '3/4', -.75],
+  ['1.2', 1.2], ['3/2', 1.5], ['1 1/2', 1.5], ['7/10', .7], ['70%', .7]
+];
+
+/* ============================================================
+   App code (no need to edit below)
+   ============================================================ */
+const $ = id => document.getElementById(id);
+const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const store = { get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }, set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} } };
+
+let current = 'test1';
+const activeGroups = () => TESTS[current] ? TESTS[current].groups : [current];
+const inSet = x => activeGroups().includes(x.g);
+const labelOf = k => TESTS[k] ? TESTS[k].label : GROUPS[k];
+
+/* Picker */
+function makeChip(key, label, isTest, parent) {
+  const b = document.createElement('button');
+  b.className = 'chip' + (isTest ? ' test' : '');
+  b.textContent = label; b.dataset.key = key;
+  b.onclick = () => choose(key);
+  parent.appendChild(b);
+}
+Object.entries(TESTS).forEach(([k, t]) => makeChip(k, t.label, true, $('testChips')));
+Object.entries(GROUPS).forEach(([k, l]) => makeChip(k, l, false, $('groupChips')));
+
+function choose(key) {
+  if (!TESTS[key] && !GROUPS[key]) key = 'test1';
+  current = key;
+  store.set('rnvp-set', key);
+  document.querySelectorAll('.chip').forEach(c => c.setAttribute('aria-pressed', c.dataset.key === key));
+  const n = VOCAB.filter(inSet).length;
+  const incl = TESTS[key] ? ' (' + TESTS[key].groups.map(g => GROUPS[g]).join(', ') + ')' : '';
+  $('nowStudying').innerHTML = 'Now studying: <b></b> · ' + n + ' words';
+  $('nowStudying').querySelector('b').textContent = labelOf(key) + incl;
+  resetCards(); newMatch(); startQuiz();
+}
+
+/* Tabs */
+document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () => {
+  document.querySelectorAll('.tab').forEach(x => x.setAttribute('aria-selected', x === t));
+  ['cards', 'match', 'quiz', 'sprint'].forEach(p => $('p-' + p).hidden = p !== t.dataset.p);
+}));
+
+/* Flashcards */
+let deck = [], ci = 0, flipped = false;
+function resetCards() { deck = VOCAB.filter(inSet); ci = 0; flipped = false; drawCard(); }
+function drawCard() {
+  const c = deck[ci], el = $('card');
+  el.classList.toggle('back', flipped);
+  el.innerHTML = '';
+  const add = (cls, text) => { const s = document.createElement('span'); s.className = cls; s.textContent = text; el.appendChild(s); };
+  if (flipped) { add('tag', c.term); add('def', c.def); add('ex', 'Example: ' + c.ex); add('trap', c.trap); }
+  else { add('tag', GROUPS[c.g]); add('term', c.term); add('ex', 'Tap to flip'); }
+  el.setAttribute('aria-label', flipped ? c.term + ': ' + c.def : c.term + ', tap to see the definition');
+  $('cardCount').textContent = 'Card ' + (ci + 1) + ' of ' + deck.length;
+}
+$('card').onclick = () => { flipped = !flipped; drawCard(); };
+$('nextCard').onclick = () => { ci = (ci + 1) % deck.length; flipped = false; drawCard(); };
+$('prevCard').onclick = () => { ci = (ci - 1 + deck.length) % deck.length; flipped = false; drawCard(); };
+$('shuffleCards').onclick = () => { deck = shuffle(VOCAB.filter(inSet)); ci = 0; flipped = false; drawCard(); };
+
+/* Match */
+let pick = null, matched = 0, misses = 0, round = [];
+function newMatch() {
+  pick = null; matched = 0; misses = 0; $('matchMsg').textContent = '';
+  round = shuffle(VOCAB.filter(inSet)).slice(0, 5);
+  const T = $('mTerms'), D = $('mDefs'); T.innerHTML = ''; D.innerHTML = '';
+  const tile = (v, cls, text, side, parent) => { const b = document.createElement('button'); b.className = cls; b.textContent = text; b.dataset.k = v.term; b.onclick = () => tap(b, side); parent.appendChild(b); };
+  shuffle(round).forEach(v => tile(v, 'tile term-t', v.term, 't', T));
+  shuffle(round).forEach(v => tile(v, 'tile', v.def, 'd', D));
+  $('matchCount').textContent = '0 of ' + round.length + ' matched';
+}
+function tap(b, side) {
+  if (b.classList.contains('done')) return;
+  document.querySelectorAll('.tile.miss').forEach(x => x.classList.remove('miss'));
+  if (!pick || pick.side === side) { if (pick) pick.b.classList.remove('sel'); pick = { b, side }; b.classList.add('sel'); return; }
+  if (pick.b.dataset.k === b.dataset.k) {
+    [pick.b, b].forEach(x => { x.classList.remove('sel'); x.classList.add('done'); x.setAttribute('aria-disabled', 'true'); });
+    matched++; $('matchCount').textContent = matched + ' of ' + round.length + ' matched';
+    $('matchMsg').innerHTML = matched === round.length ? '<span class="ok">All matched!</span> Misses: ' + misses + '. Tap New round for different words.' : '<span class="ok">Match!</span>';
+  } else {
+    misses++; pick.b.classList.remove('sel'); pick.b.classList.add('miss'); b.classList.add('miss');
+    $('matchMsg').innerHTML = '<span class="no">Not a match.</span> Try again.';
+  }
+  pick = null;
+}
+$('matchReset').onclick = newMatch;
+
+/* Practice quiz */
+let qs = [], qi = 0, score = 0;
+function startQuiz() { qs = shuffle(QUIZ.filter(inSet)).slice(0, 10).map(x => ({ ...x, all: shuffle([x.a, ...x.o]) })); qi = 0; score = 0; drawQ(); }
+function drawQ() {
+  const body = $('quizBody'); body.innerHTML = '';
+  $('quizBar').style.width = (qi / qs.length * 100) + '%';
+  if (qi >= qs.length) {
+    $('quizCount').textContent = 'Done';
+    const pct = Math.round(score / qs.length * 100);
+    const msg = pct >= 90 ? 'You\'re ready. Try Compare Sprint to stay sharp.' : pct >= 70 ? 'Close! Review the flashcards for the ones you missed, then try again.' : 'Go back to the flashcards and Match It, then take the quiz again.';
+    body.innerHTML = '<p class="q">You got ' + score + ' out of ' + qs.length + ' (' + pct + '%).</p><p class="hint">' + msg + '</p>';
+    const b = document.createElement('button'); b.className = 'btn'; b.textContent = 'Take it again'; b.onclick = startQuiz; body.appendChild(b); return;
+  }
+  const x = qs[qi];
+  $('quizCount').textContent = 'Question ' + (qi + 1) + ' of ' + qs.length + ' · Score ' + score;
+  const q = document.createElement('p'); q.className = 'q'; q.textContent = x.q; body.appendChild(q);
+  const opts = document.createElement('div'); opts.className = 'opts'; body.appendChild(opts);
+  const fb = document.createElement('p'); fb.className = 'feedback'; fb.setAttribute('aria-live', 'polite'); body.appendChild(fb);
+  const next = document.createElement('button'); next.className = 'btn'; next.textContent = qi === qs.length - 1 ? 'See my score' : 'Next question'; next.hidden = true;
+  next.onclick = () => { qi++; drawQ(); }; body.appendChild(next);
+  x.all.forEach(o => {
+    const b = document.createElement('button'); b.className = 'opt'; b.textContent = o;
+    b.onclick = () => {
+      opts.querySelectorAll('.opt').forEach(z => { z.disabled = true; if (z.textContent === x.a) z.classList.add('right'); });
+      if (o === x.a) { score++; fb.innerHTML = '<span class="ok">Correct!</span> '; }
+      else { b.classList.add('wrong'); fb.innerHTML = '<span class="no">Not quite.</span> '; }
+      fb.appendChild(document.createTextNode(x.why)); next.hidden = false; next.focus();
+    };
+    opts.appendChild(b);
+  });
+}
+
+/* Compare sprint */
+const same = (p, q) => Math.abs(p[1] - q[1]) < 1e-9;
+let sp = null, streak = 0, best = 0, total = 0, right = 0;
+function newSprint() {
+  let a, b;
+  if (Math.random() < .2) {
+    a = shuffle(SPRINT).find(x => SPRINT.some(y => y !== x && same(x, y)));
+    b = shuffle(SPRINT.filter(y => y !== a && same(a, y)))[0];
+  } else {
+    do { a = SPRINT[Math.floor(Math.random() * SPRINT.length)]; b = SPRINT[Math.floor(Math.random() * SPRINT.length)]; } while (same(a, b));
+  }
+  sp = { a, b, ans: same(a, b) ? '=' : a[1] < b[1] ? '<' : '>' };
+  $('spA').textContent = a[0]; $('spB').textContent = b[0];
+  $('sprintCount').textContent = right + ' of ' + total + ' · Streak ' + streak + ' · Best ' + best;
+}
+function answerSprint(s) {
+  total++;
+  const why = sp.ans === '=' ? 'They are equivalent.' : sp.a[0] + ' is farther ' + (sp.ans === '<' ? 'left.' : 'right.');
+  if (s === sp.ans) { right++; streak++; best = Math.max(best, streak); $('sprintMsg').innerHTML = '<span class="ok">Yes!</span> '; }
+  else { streak = 0; $('sprintMsg').innerHTML = '<span class="no">Not quite.</span> '; }
+  $('sprintMsg').appendChild(document.createTextNode(sp.a[0] + ' ' + sp.ans + ' ' + sp.b[0] + '. ' + why));
+  newSprint();
+}
+document.querySelectorAll('.sign').forEach(b => b.onclick = () => answerSprint(b.dataset.s));
+
+/* Start: a link ending in #test2 or #w3 opens that set; otherwise the last set used */
+const fromHash = location.hash.replace('#', '');
+choose(TESTS[fromHash] || GROUPS[fromHash] ? fromHash : (store.get('rnvp-set') || 'test1'));
+newSprint();
+</script>
+</body>
+</html>
